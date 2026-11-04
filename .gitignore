@@ -356,3 +356,6 @@ xkelib/kernelext.exp
 xkelib/kernelext.lib
 xkelib/xamext.exp
 xkelib/xamext.lib
+
+# Release_LTCG build output
+[Rr]elease_LTCG/
