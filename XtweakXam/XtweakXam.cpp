@@ -270,6 +270,31 @@ NTSTATUS XexpLoadImageHook(LPCSTR xexName, DWORD typeInfo, DWORD ver, PHANDLE mo
 //######################################
 
 
+// True if block number index is in skip, a list of numbers and ranges ("3, 18-37").
+static bool rglp_block_skipped(const string& skip, int index)
+{
+	const char* p = skip.c_str();
+	while(*p)
+	{
+		char* end;
+		long first = strtol(p, &end, 10);
+		if(end == p)
+		{
+			p++;
+			continue;
+		}
+		long last = first;
+		p = end;
+		if(*p == '-')
+		{
+			last = strtol(p+1, &end, 10);
+			p = end;
+		}
+		if(index >= first && index <= last) return true;
+	}
+	return false;
+}
+
 int patch_apply_binary(string filepath)
 {
 
@@ -295,6 +320,9 @@ int patch_apply_binary(string filepath)
 	buffer = new BYTE[size];
 	fread(buffer, 1, size, patches);
 
+	// Debug aid: [Config] RGLP_Skip lists patch blocks (numbered from 0) to leave out.
+	string skip = reader->Get("Config", "RGLP_Skip", "");
+
 	DWORD offset=0;
 	if(*(DWORD*)&buffer[offset]==0x52474C50)
 	{
@@ -307,7 +335,12 @@ int patch_apply_binary(string filepath)
 	{
 		DWORD numPatches = *(DWORD*)&buffer[offset];
 		offset+=4;
-		for(DWORD i=0; i<numPatches; i++, offset+=4, dest+=4)
+		if(rglp_block_skipped(skip, patchesApplied))
+		{
+			RGLDbgPrint("   - skipping block %d at %08X\n", patchesApplied, dest);
+			offset+=numPatches*4;
+		}
+		else for(DWORD i=0; i<numPatches; i++, offset+=4, dest+=4)
 		{
 			setmem(dest, *(DWORD*)&buffer[offset]);
 		}
