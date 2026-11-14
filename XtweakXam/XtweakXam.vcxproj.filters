@@ -45,6 +45,9 @@
     <ClInclude Include="sysredirect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="featurelock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="sysext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sysredirect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="featurelock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sysext.cpp">

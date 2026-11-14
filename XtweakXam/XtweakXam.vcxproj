@@ -186,6 +186,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="sysext.h" />
     <ClInclude Include="sysredirect.h" />
+    <ClInclude Include="featurelock.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="xam.h" />
     <ClInclude Include="xshell.h" />
@@ -202,6 +203,7 @@
     </ClCompile>
     <ClCompile Include="sysext.cpp" />
     <ClCompile Include="sysredirect.cpp" />
+    <ClCompile Include="featurelock.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="xam.cpp" />
     <ClCompile Include="xshell.cpp" />

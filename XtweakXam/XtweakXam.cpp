@@ -14,6 +14,7 @@
 #include "sysext.h"
 #include "coverart.h"
 #include "sysredirect.h"
+#include "featurelock.h"
 using namespace std;
 
 static bool fKeepMemory=true;
@@ -531,6 +532,22 @@ BOOL Initialize(HANDLE hModule)
 			RGLDbgPrint(" * SysExt_Redirect needs a folder name (e.g. Filesystems\\sysext), skipping\n");
 		else
 			SysRedirect_Install(temp.c_str());
+	}
+
+	// Keep xam's saved feature mask from losing features (xbGuard's devkit "optimizations" turn
+	// off XMP and four others). Default protects all seven (0x7F), xam's own default; games
+	// need XMP for music. xbGuard freezes when its popup shows with XMP (0x04) on, so use 0x40
+	// (wireless only) while running xbGuard. Feature_Lock = 0 turns it off, a hex value sets which features to
+	// protect (bit = feature id - 1), "log" only logs.
+	temp = reader->Get("Config", "Feature_Lock", "NOTFOUND");
+	if (temp != "0" && temp != "false" && temp != "off") {
+		ULONGLONG protect = 0x7F;
+		if (temp == "log")
+			protect = 0;	// hooks + logging + spoof only, nothing blocked
+		else if (temp != "NOTFOUND" && temp != "1" && temp != "true" && temp != "on")
+			protect = _strtoui64(temp.c_str(), NULL, 0);
+		if (protect != 0 || temp == "log")
+			FeatureLock_Install(protect);
 	}
 
 
